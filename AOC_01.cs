@@ -17,8 +17,6 @@ public class AOC_01 : MonoBehaviour
     void Initialize(){
         totalSum = 0;
         dataSums = new List<int>();
-        dataList = new List<int>();
-        blockResults = new List<int>();
         dataSubBlockSum = 0;
         dataBlockMax = 0;
         blockID = 0;
