@@ -4,66 +4,60 @@ using System.IO;
 using System.Linq;
 public class AOC_01 : MonoBehaviour
 {
-    List<int> dataList, dataSubBlock, blockResults;
-    List<List<int>> dataBlock;
-    //List<int[]> dataBlock;
+    List<int> dataList, blockResults, dataSums;
     List<string> dataLines;
-    //int[] dataLines;
-    int parsedDataLine, blockID, blockResult, biggestResult, finalResult;
+    int blockID, totalSum, dataSubBlockSum, dataBlockMax;
 
     void Start()
     {    
         Initialize();
         ParseFile();
         ProcessData();
-        ComputeResult();
     }
     void Initialize(){
-        blockID = 0;
+        totalSum = 0;
+        dataSums = new List<int>();
         dataList = new List<int>();
-        dataSubBlock = new List<int>();
-        dataBlock = new List<List<int>>();
-        //dataBlock = new List<int[]>();
         blockResults = new List<int>();
+        dataSubBlockSum = 0;
+        dataBlockMax = 0;
+        blockID = 0;
     }
     void ParseFile()
     {
         dataLines = File.ReadLines(@"Assets/Inputs/01_input.txt").ToList();
         Debug.Log("dataLines.Count = " + dataLines.Count());
+        foreach (var i in dataLines){
+            if (i != ""){
+                totalSum += int.Parse(i);
+            } 
+        }
+        Debug.Log("total sum = " + totalSum);
+    }
+    void AddData(int blockID, List<int> dataSubBlock)
+    {
+        dataSubBlockSum = dataSubBlock.Sum();
+        dataSums.Add(dataSubBlockSum);
+        dataBlockMax = dataSums.Max();
     }
     void ProcessData()
     {
-        // break into different blocks
+        List<int> dataSubBlock = new List<int>();
         for (int i = 0; i < dataLines.Count(); i++)
-        {      
-            //Debug.Log("dataLines[" + i + "] = " + dataLines[i]);
+        {    
             if (dataLines[i] == "")
             {
-                blockID += 1;
-                dataBlock.Insert(blockID, new List<int>());
+                AddData(blockID, dataSubBlock);
+                blockID ++;
+                dataSubBlock.Clear();
+                dataSubBlock = new List<int>();
             } else {
                 dataSubBlock.Add(int.Parse(dataLines[i]));
-                dataBlock.Insert(blockID, dataSubBlock);
+                if (i == dataLines.Count()-1){
+                    AddData(blockID, dataSubBlock);
+                    Debug.Log("------------- dataBlockMax = " + dataBlockMax);
+                }
             }
         }
-        // calculate sum for each block
-        //for (int i = 0; i < dataBlock.Count(); i++)
-        //{
-            foreach (List<int> l in dataBlock)
-            {
-                blockResult = 0;
-                foreach (int num in l)
-                {
-                    blockResult += num;
-                }
-                Debug.Log("blockResult = " + blockResult);
-                blockResults.Add(blockResult);
-            }
-        //}
-    }
-    void ComputeResult()
-    {
-        finalResult = blockResults.Max();
-        Debug.Log("----------------------- The highest number is " + finalResult);
     }
 }
